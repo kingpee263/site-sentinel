@@ -7,8 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { isLoggedIn, logout } from "@/lib/auth";
-import { getPosts, savePost, deletePost, Post } from "@/lib/posts";
-import { LogOut, Plus, Trash2, FileText, Calendar } from "lucide-react";
+import { getPosts, savePost, deletePost, updatePost, Post } from "@/lib/posts";
+import { LogOut, Plus, Trash2, FileText, Calendar, Edit, X, Save } from "lucide-react";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -16,6 +16,10 @@ export default function Admin() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [body, setBody] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editBody, setEditBody] = useState("");
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -56,6 +60,46 @@ export default function Admin() {
       title: "Deleted",
       description: "Post removed successfully",
     });
+  };
+
+  const handleEdit = (post: Post) => {
+    setEditingId(post.id);
+    setEditTitle(post.title);
+    setEditDate(post.date);
+    setEditBody(post.body);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditTitle("");
+    setEditDate("");
+    setEditBody("");
+  };
+
+  const handleSaveEdit = (id: string) => {
+    if (!editTitle.trim() || !editDate.trim() || !editBody.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const updated = updatePost(id, {
+      title: editTitle.trim(),
+      date: editDate,
+      body: editBody.trim(),
+    });
+
+    if (updated) {
+      setPosts(posts.map(p => p.id === id ? updated : p));
+      handleCancelEdit();
+      toast({
+        title: "Success",
+        description: "Post updated successfully!",
+      });
+    }
   };
 
   const handleLogout = () => {
@@ -153,24 +197,86 @@ export default function Admin() {
             posts.map((post) => (
               <Card key={post.id} className="glass-card border-border hover:border-primary/30 transition-colors">
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground truncate">{post.title}</h3>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                        <Calendar className="w-3 h-3" />
-                        {post.date}
-                      </p>
-                      <p className="text-sm text-foreground/80 mt-2 line-clamp-2">{post.body}</p>
+                  {editingId === post.id ? (
+                    // Edit Mode
+                    <div className="space-y-4">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label className="text-foreground">Title</Label>
+                          <Input
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="bg-input border-border text-foreground"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-foreground">Date</Label>
+                          <Input
+                            type="date"
+                            value={editDate}
+                            onChange={(e) => setEditDate(e.target.value)}
+                            className="bg-input border-border text-foreground"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-foreground">Body</Label>
+                        <Textarea
+                          value={editBody}
+                          onChange={(e) => setEditBody(e.target.value)}
+                          rows={4}
+                          className="bg-input border-border text-foreground resize-none"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleSaveEdit(post.id)}
+                          className="bg-accent text-accent-foreground hover:bg-accent/90"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          Save
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handleCancelEdit}
+                          className="border-border text-foreground"
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(post.id)}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  ) : (
+                    // View Mode
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground">{post.title}</h3>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                          <Calendar className="w-3 h-3" />
+                          {post.date}
+                        </p>
+                        <p className="text-sm text-foreground/80 mt-2 whitespace-pre-wrap">{post.body}</p>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(post)}
+                          className="text-primary hover:text-primary hover:bg-primary/10"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(post.id)}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))

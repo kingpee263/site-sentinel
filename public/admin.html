@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AustinstayerFX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: hsl(222, 47%, 6%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(222, 47%, 8%);
+            --primary: hsl(217, 91%, 60%);
+            --primary-foreground: hsl(222, 47%, 6%);
+            --secondary: hsl(217, 33%, 17%);
+            --muted: hsl(215, 20%, 65%);
+            --accent: hsl(160, 84%, 39%);
+            --destructive: hsl(0, 84%, 60%);
+            --border: hsl(217, 33%, 17%);
+            --input: hsl(217, 33%, 22%);
+            --radius: 0.75rem;
+            --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(160, 84%, 39%) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Header */
+        .header {
+            background: hsla(222, 47%, 8%, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            color: var(--muted);
+            margin-left: 0.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--radius) - 2px);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--foreground);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--primary-foreground);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            padding: 0.5rem;
+        }
+
+        .btn-ghost:hover {
+            background: hsla(217, 33%, 17%, 0.5);
+        }
+
+        .btn-ghost.danger {
+            color: var(--destructive);
+        }
+
+        .btn-ghost.danger:hover {
+            background: hsla(0, 84%, 60%, 0.1);
+        }
+
+        .btn-ghost.edit {
+            color: var(--primary);
+        }
+
+        .btn-ghost.edit:hover {
+            background: hsla(217, 91%, 60%, 0.1);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: hsla(222, 47%, 8%, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(217, 33%, 17%, 0.5);
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            color: var(--foreground);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--input);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) - 2px);
+            color: var(--foreground);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--muted);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Posts List */
+        .posts-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .posts-header svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .post-card {
+            background: hsla(222, 47%, 8%, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(217, 33%, 17%, 0.5);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .post-card:hover {
+            border-color: hsla(217, 91%, 60%, 0.3);
+        }
+
+        .post-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .post-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .post-date {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-date svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .post-body {
+            color: hsla(210, 40%, 98%, 0.8);
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        /* Edit Form */
+        .edit-form {
+            display: none;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        .view-mode.hidden {
+            display: none;
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            max-width: 350px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--accent);
+        }
+
+        .toast.error {
+            border-color: var(--destructive);
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        /* Icon SVG */
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="gradient-text">AustinstayerFX</span>
+                <span class="logo-subtitle">Admin</span>
+            </div>
+            <button class="btn btn-outline" id="logoutBtn">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Create Post Form -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Create New Post
+                </h2>
+            </div>
+            <div class="card-content">
+                <form id="createForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="postTitle">Title</label>
+                            <input type="text" id="postTitle" placeholder="Post title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postDate">Date</label>
+                            <input type="date" id="postDate" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="postBody">Body</label>
+                            <textarea id="postBody" placeholder="Write your post content here..." required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Create Post
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Posts List -->
+        <div class="posts-section">
+            <h2 class="posts-header">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                </svg>
+                Posts (<span id="postCount">0</span>)
+            </h2>
+            <div id="postsContainer"></div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-title" id="toastTitle"></div>
+        <div class="toast-message" id="toastMessage"></div>
+    </div>
+
+    <script>
+        // Check authentication
+        if (sessionStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'admin-login.html';
+        }
+
+        // Posts storage key
+        const POSTS_KEY = 'admin_posts';
+
+        // Get posts from localStorage
+        function getPosts() {
+            const stored = localStorage.getItem(POSTS_KEY);
+            if (!stored) return [];
+            try {
+                return JSON.parse(stored);
+            } catch {
+                return [];
+            }
+        }
+
+        // Save posts to localStorage
+        function savePosts(posts) {
+            localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+        }
+
+        // Generate unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Render posts list
+        function renderPosts() {
+            const posts = getPosts();
+            const container = document.getElementById('postsContainer');
+            const countEl = document.getElementById('postCount');
+            
+            countEl.textContent = posts.length;
+
+            if (posts.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                            </svg>
+                            <p>No posts yet. Create your first post above!</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <div class="post-card" data-id="${post.id}">
+                    <div class="view-mode">
+                        <div class="post-content">
+                            <div class="post-info">
+                                <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                                <div class="post-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                    ${escapeHtml(post.date)}
+                                </div>
+                                <p class="post-body">${escapeHtml(post.body)}</p>
+                            </div>
+                            <div class="post-actions">
+                                <button class="btn btn-ghost edit" onclick="startEdit('${post.id}')" title="Edit">
+                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                        <path d="m15 5 4 4"/>
+                                    </svg>
+                                </button>
+                                <button class="btn btn-ghost danger" onclick="deletePost('${post.id}')" title="Delete">
+                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edit-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" class="edit-title" value="${escapeHtml(post.title)}">
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="edit-date" value="${post.date}">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Body</label>
+                                <textarea class="edit-body">${escapeHtml(post.body)}</textarea>
+                            </div>
+                        </div>
+                        <div class="edit-actions">
+                            <button class="btn btn-accent" onclick="saveEdit('${post.id}')">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17,21 17,13 7,13 7,21"/>
+                                    <polyline points="7,3 7,8 15,8"/>
+                                </svg>
+                                Save
+                            </button>
+                            <button class="btn btn-outline" onclick="cancelEdit('${post.id}')">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Create new post
+        document.getElementById('createForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('postTitle').value.trim();
+            const date = document.getElementById('postDate').value;
+            const body = document.getElementById('postBody').value.trim();
+
+            if (!title || !date || !body) {
+                showToast('Error', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            const posts = getPosts();
+            const newPost = {
+                id: generateId(),
+                title,
+                date,
+                body,
+                createdAt: Date.now()
+            };
+
+            posts.unshift(newPost);
+            savePosts(posts);
+
+            // Clear form
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postDate').value = '';
+            document.getElementById('postBody').value = '';
+
+            renderPosts();
+            showToast('Success', 'Post created successfully!');
+        });
+
+        // Start editing a post
+        function startEdit(id) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            card.querySelector('.view-mode').classList.add('hidden');
+            card.querySelector('.edit-form').classList.add('active');
+        }
+
+        // Cancel editing
+        function cancelEdit(id) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            card.querySelector('.view-mode').classList.remove('hidden');
+            card.querySelector('.edit-form').classList.remove('active');
+            renderPosts(); // Reset to original values
+        }
+
+        // Save edited post
+        function saveEdit(id) {
+            const card = document.querySelector(`[data-id="${id}"]`);
+            const title = card.querySelector('.edit-title').value.trim();
+            const date = card.querySelector('.edit-date').value;
+            const body = card.querySelector('.edit-body').value.trim();
+
+            if (!title || !date || !body) {
+                showToast('Error', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            const posts = getPosts();
+            const index = posts.findIndex(p => p.id === id);
+            
+            if (index !== -1) {
+                posts[index] = { ...posts[index], title, date, body };
+                savePosts(posts);
+                renderPosts();
+                showToast('Success', 'Post updated successfully!');
+            }
+        }
+
+        // Delete post
+        function deletePost(id) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            const posts = getPosts().filter(p => p.id !== id);
+            savePosts(posts);
+            renderPosts();
+            showToast('Deleted', 'Post removed successfully');
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('admin_logged_in');
+            sessionStorage.removeItem('login_time');
+            window.location.href = 'admin-login.html';
+        });
+
+        // Initial render
+        renderPosts();
+    </script>
+</body>
+</html>

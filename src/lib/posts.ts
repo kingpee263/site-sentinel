@@ -30,6 +30,16 @@ export function savePost(post: Omit<Post, "id" | "createdAt">): Post {
   return newPost;
 }
 
+export function updatePost(id: string, updates: Partial<Omit<Post, "id" | "createdAt">>): Post | null {
+  const posts = getPosts();
+  const index = posts.findIndex(p => p.id === id);
+  if (index === -1) return null;
+  
+  posts[index] = { ...posts[index], ...updates };
+  localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+  return posts[index];
+}
+
 export function deletePost(id: string): void {
   const posts = getPosts().filter(p => p.id !== id);
   localStorage.setItem(POSTS_KEY, JSON.stringify(posts));

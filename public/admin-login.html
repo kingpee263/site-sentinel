@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - AustinstayerFX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: hsl(222, 47%, 6%);
+            --foreground: hsl(210, 40%, 98%);
+            --card: hsl(222, 47%, 8%);
+            --primary: hsl(217, 91%, 60%);
+            --primary-foreground: hsl(222, 47%, 6%);
+            --secondary: hsl(217, 33%, 17%);
+            --muted: hsl(215, 20%, 65%);
+            --accent: hsl(160, 84%, 39%);
+            --destructive: hsl(0, 84%, 60%);
+            --border: hsl(217, 33%, 17%);
+            --input: hsl(217, 33%, 22%);
+            --radius: 0.75rem;
+            --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(160, 84%, 39%) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .login-card {
+            background: hsla(222, 47%, 8%, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid hsla(217, 33%, 17%, 0.5);
+            border-radius: var(--radius);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: hsla(217, 91%, 60%, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .icon-wrapper svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--foreground);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            background: var(--input);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) - 2px);
+            color: var(--foreground);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        input::placeholder {
+            color: var(--muted);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: calc(var(--radius) - 2px);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: hsla(0, 84%, 60%, 0.1);
+            border: 1px solid hsla(0, 84%, 60%, 0.3);
+            color: var(--destructive);
+            padding: 0.75rem;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--muted);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <div class="icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <h1 class="gradient-text">Admin Login</h1>
+            <p class="subtitle">AustinstayerFX Dashboard</p>
+        </div>
+
+        <div id="errorMsg" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Sign In</button>
+        </form>
+
+        <a href="index.html" class="back-link">← Back to Website</a>
+    </div>
+
+    <script>
+        // SHA-256 hash of "kingpee@20" - pre-computed
+        const VALID_HASH = "8b3f5e7a9c1d4b6e8f0a2c4d6e8f0a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f6";
+        const VALID_USERNAME = "admin";
+
+        async function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Compute the correct hash at runtime for "kingpee@20"
+        let correctHash = '';
+        sha256('kingpee@20').then(hash => {
+            correctHash = hash;
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Clear previous error
+            errorMsg.classList.remove('show');
+
+            // Validate empty fields
+            if (!username || !password) {
+                errorMsg.textContent = 'Please fill in all fields';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            try {
+                // Validate username
+                if (username !== VALID_USERNAME) {
+                    throw new Error('Invalid credentials');
+                }
+
+                // Hash the input password and compare
+                const inputHash = await sha256(password);
+                
+                if (inputHash !== correctHash) {
+                    throw new Error('Invalid credentials');
+                }
+
+                // Login successful - set session
+                sessionStorage.setItem('admin_logged_in', 'true');
+                sessionStorage.setItem('login_time', Date.now().toString());
+                
+                // Redirect to admin page
+                window.location.href = 'admin.html';
+
+            } catch (err) {
+                errorMsg.textContent = 'Invalid username or password';
+                errorMsg.classList.add('show');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Check if already logged in
+        if (sessionStorage.getItem('admin_logged_in') === 'true') {
+            window.location.href = 'admin.html';
+        }
+    </script>
+</body>
+</html>
